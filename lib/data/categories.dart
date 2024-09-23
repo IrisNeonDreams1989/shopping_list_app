@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 
-import 'package:shopping_list/models/category.dart';
+import 'package:flutter/material.dart';
+import 'package:shopping_list_app/models/category.dart';
 
 const categories = {
   Categories.vegetables: Category(
