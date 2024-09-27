@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shopping_list_app/data/categories.dart';
 import 'package:shopping_list_app/models/category.dart';
 import 'package:shopping_list_app/models/grocery_item.dart';
+import 'package:http/http.dart' as http;
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -18,16 +21,44 @@ class _NewItemState extends State<NewItem> {
   void _saveItem() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      print(_enteredName);
-      print(_enteredQuantity);
-      print(_selectedCategory.title);
-      Navigator.of(context).pop(
-        GroceryItem(
-            id: DateTime.now().toString(),
-            name: _enteredName,
-            quantity: _enteredQuantity,
-            category: _selectedCategory),
+      final url = Uri.https(
+        'shoppinglistsapp-7e589-default-rtdb.asia-southeast1.firebasedatabase.app',
+        '/shopping-list.json',
       );
+      http
+          .post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(
+          {
+            'name': _enteredName,
+            'quantity': _enteredQuantity,
+            'category': _selectedCategory.title,
+          },
+        ),
+      )
+          .then((response) {
+        if (response.statusCode >= 400) {
+          // Xử lý lỗi nếu xảy ra
+          print('Lỗi khi gửi dữ liệu: ${response.body}');
+        } else {
+          // Thông báo thêm dữ liệu thành công
+          print('Dữ liệu đã được thêm: ${response.body}');
+        }
+      }).catchError((error) {
+        // Xử lý lỗi trong trường hợp có lỗi mạng hoặc lỗi khác
+        print('Xảy ra lỗi: $error');
+      });
+
+      // Navigator.of(context).pop(
+      //   GroceryItem(
+      //       id: DateTime.now().toString(),
+      //       name: _enteredName,
+      //       quantity: _enteredQuantity,
+      //       category: _selectedCategory),
+      // );
     }
   }
 
