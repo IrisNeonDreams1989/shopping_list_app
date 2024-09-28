@@ -58,6 +58,10 @@ class _GroceryListState extends State<GroceryList> {
     if (newItem == null) {
       return;
     }
+    /*Sau khi lưu dữ liệu thành công (trong _saveItem), 
+    Navigator.of(context).pop() sẽ trả về đối tượng GroceryItem cho hàm _addItem.
+    Hàm _addItem sẽ nhận item mới và sử dụng setState để thêm item vào mảng _groceryItems, 
+    từ đó cập nhật giao diện với danh sách item mới.*/
     setState(() {
       _groceryItems.add(newItem);
     });

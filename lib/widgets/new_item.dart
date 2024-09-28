@@ -54,11 +54,14 @@ class _NewItemState extends State<NewItem> {
        hàm kiểm tra xem widget có còn trong cây widget
       hay không (sử dụng context.mounted) để tránh lỗi.*/
         Navigator.of(context).pop(GroceryItem(
-          id: resData,
+          id: resData[
+              'name'], //lấy ID từ response (resData['name']) và tạo một đối tượng GroceryItem mới với dữ liệu vừa nhập.
           name: _enteredName,
           quantity: _enteredQuantity,
           category: _selectedCategory,
         ));
+        // Sau khi item được thêm thành công vào database,
+        //Navigator.of(context).pop() sẽ trả về GroceryItem về màn hình trước (nơi hàm _addItem được gọi).
       } catch (error) {
         // Xử lý lỗi trong trường hợp có lỗi mạng hoặc lỗi khác
         print('Xảy ra lỗi: $error');
