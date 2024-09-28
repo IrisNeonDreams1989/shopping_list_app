@@ -18,14 +18,14 @@ class _NewItemState extends State<NewItem> {
   var _enteredName = '';
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
-  void _saveItem() {
+  void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final url = Uri.https(
         'shoppinglistsapp-7e589-default-rtdb.asia-southeast1.firebasedatabase.app',
         '/shopping-list.json',
       );
-      http
+      await http
           .post(
         url,
         headers: {
@@ -52,13 +52,11 @@ class _NewItemState extends State<NewItem> {
         print('Xảy ra lỗi: $error');
       });
 
-      // Navigator.of(context).pop(
-      //   GroceryItem(
-      //       id: DateTime.now().toString(),
-      //       name: _enteredName,
-      //       quantity: _enteredQuantity,
-      //       category: _selectedCategory),
-      // );
+      if (!context.mounted) return;
+      /*Trước khi điều hướng hoặc cập nhật giao diện,
+       hàm kiểm tra xem widget có còn trong cây widget
+      hay không (sử dụng context.mounted) để tránh lỗi.*/
+      Navigator.of(context).pop();
     }
   }
 
