@@ -18,8 +18,12 @@ class _NewItemState extends State<NewItem> {
   var _enteredName = '';
   var _enteredQuantity = 1;
   var _selectedCategory = categories[Categories.vegetables]!;
+  var _isSending = false;
   void _saveItem() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isSending = true;
+      });
       _formKey.currentState!.save();
       final url = Uri.https(
         'shoppinglistsapp-7e589-default-rtdb.asia-southeast1.firebasedatabase.app',
@@ -60,7 +64,7 @@ class _NewItemState extends State<NewItem> {
           quantity: _enteredQuantity,
           category: _selectedCategory,
         ));
-        // Sau khi item được thêm thành công vào database,
+        //Sau khi item được thêm thành công vào database,
         //Navigator.of(context).pop() sẽ trả về GroceryItem về màn hình trước (nơi hàm _addItem được gọi).
       } catch (error) {
         // Xử lý lỗi trong trường hợp có lỗi mạng hoặc lỗi khác
@@ -163,12 +167,21 @@ class _NewItemState extends State<NewItem> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: () {
-                        _formKey.currentState!.reset();
-                      },
+                      onPressed: _isSending
+                          ? null
+                          : () {
+                              _formKey.currentState!.reset();
+                            },
                       child: const Text('Reset')),
                   ElevatedButton(
-                      onPressed: _saveItem, child: const Text('Add item')),
+                      onPressed: _isSending ? null : _saveItem,
+                      child: _isSending
+                          ? const SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(),
+                            )
+                          : const Text('Add item')),
                 ],
               ),
             ],
