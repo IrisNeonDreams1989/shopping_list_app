@@ -25,21 +25,21 @@ class _NewItemState extends State<NewItem> {
         'shoppinglistsapp-7e589-default-rtdb.asia-southeast1.firebasedatabase.app',
         '/shopping-list.json',
       );
-      await http
-          .post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode(
-          {
-            'name': _enteredName,
-            'quantity': _enteredQuantity,
-            'category': _selectedCategory.title,
+      try {
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
           },
-        ),
-      )
-          .then((response) {
+          body: json.encode(
+            {
+              'name': _enteredName,
+              'quantity': _enteredQuantity,
+              'category': _selectedCategory.title,
+            },
+          ),
+        );
+
         if (response.statusCode >= 400) {
           // Xử lý lỗi nếu xảy ra
           print('Lỗi khi gửi dữ liệu: ${response.body}');
@@ -47,16 +47,22 @@ class _NewItemState extends State<NewItem> {
           // Thông báo thêm dữ liệu thành công
           print('Dữ liệu đã được thêm: ${response.body}');
         }
-      }).catchError((error) {
-        // Xử lý lỗi trong trường hợp có lỗi mạng hoặc lỗi khác
-        print('Xảy ra lỗi: $error');
-      });
 
-      if (!context.mounted) return;
-      /*Trước khi điều hướng hoặc cập nhật giao diện,
+        final Map<String, dynamic> resData = json.decode(response.body);
+        if (!context.mounted) return;
+        /*Trước khi điều hướng hoặc cập nhật giao diện,
        hàm kiểm tra xem widget có còn trong cây widget
       hay không (sử dụng context.mounted) để tránh lỗi.*/
-      Navigator.of(context).pop();
+        Navigator.of(context).pop(GroceryItem(
+          id: resData,
+          name: _enteredName,
+          quantity: _enteredQuantity,
+          category: _selectedCategory,
+        ));
+      } catch (error) {
+        // Xử lý lỗi trong trường hợp có lỗi mạng hoặc lỗi khác
+        print('Xảy ra lỗi: $error');
+      }
     }
   }
 

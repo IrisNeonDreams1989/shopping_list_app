@@ -50,16 +50,17 @@ class _GroceryListState extends State<GroceryList> {
   }
 
   void _addItem(BuildContext context) async {
-    await Navigator.of(context).push<GroceryItem>(
+    final newItem = await Navigator.of(context).push<GroceryItem>(
       MaterialPageRoute(
         builder: (context) => const NewItem(),
       ),
     );
-    final url = Uri.https(
-      'shoppinglistsapp-7e589-default-rtdb.asia-southeast1.firebasedatabase.app',
-      '/shopping-list.json',
-    );
-    _loadItems();
+    if (newItem == null) {
+      return;
+    }
+    setState(() {
+      _groceryItems.add(newItem);
+    });
   }
 
   void _removeItem(GroceryItem item) {
